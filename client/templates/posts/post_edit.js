@@ -11,14 +11,14 @@ Template.postEdit.events({
     
     var postWithSameLink = Posts.findOne({url: postProperties.url});
     if (postWithSameLink && postWithSameLink._id != currentPostId) {
-      alert("Post with this url already exists");
+      throwError("Post with this url already exists");
       return;
     }
 
     Posts.update(currentPostId, {$set: postProperties}, function(error) {
       if (error) {
         // display the error to the user
-        alert(error.reason);
+        throwError(error.reason);
       } else {
         Router.go('postPage', {_id: currentPostId});
       }
