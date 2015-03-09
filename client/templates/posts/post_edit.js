@@ -23,13 +23,20 @@ Template.postEdit.events({
     }
     
     var errors = validatePost(postProperties);
-    if (errors.title || errors.url)
+    if (errors.title || errors.url) {
       return Session.set('postEditErrors', errors);
+    }
+
+    var postWithSameLink = Posts.findOne({url: postProperties.url});
+    if (postWithSameLink && postWithSameLink._id != currentPostId) {
+      Errors.throw("This link has already been posted");
+      return;
+    }
     
     Posts.update(currentPostId, {$set: postProperties}, function(error) {
       if (error) {
         // display the error to the user
-        throwError(error.reason);
+        Errors.throw(error.reason);
       } else {
         Router.go('postPage', {_id: currentPostId});
       }
